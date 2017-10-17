@@ -20,15 +20,27 @@ if (( num_dev < 1 )); then
   exit
 fi
 
-# stop_containers
+echo "creating video devices"
+declare -A videoIDs
+cnt=1
+devs="0"
+for dev in "${device_ids[@]}"
+do
+videoIDs[$dev]=$cnt
+devs=$devs","$cnt
+cnt=$((cnt+1))
+done
+
+sudo modprobe -r v4l2loopback
+sudo modprobe v4l2loopback video_nr=$devs
 
 # run docker container for each leap
 for dev in "${device_ids[@]}"
 do
   echo "starting docker for device" $dev
-  CID=$(docker run -d -e PORT=$ws_starting_port --device=/dev/bus/usb/$dev leap-docker &)
+  CID=$(docker run -d -e PORT=$ws_starting_port -e DEV=/dev/video${videoIDs[$dev]} --device=/dev/bus/usb/$dev --device=/dev/video${videoIDs[$dev]} $docker_name &)
   IP=$(docker inspect --format '{{ .NetworkSettings.IPAddress }}' $CID)	
-  echo "started leap daemon on " $IP " at port " $ws_starting_port
+  echo "started leap daemon on "$IP" at port "$ws_starting_port" with video stream at /dev/video"${videoIDs[$dev]}
   ws_starting_port=$((ws_starting_port+1))
 done
 

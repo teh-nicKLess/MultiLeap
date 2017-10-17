@@ -9,6 +9,9 @@ install packages:
 
     docker.io
     python-websocket
+    v4l2loopback-utils
+
+compile and copy exposeImages to leapdockerbuild
 
 build docker image:
 
