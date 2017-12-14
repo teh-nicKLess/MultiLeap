@@ -35,6 +35,9 @@ void SampleListener::onImages(const Controller& controller) {
     }
 
     write(fd, buffer, stereo_size);
+
+    Leap::Image image_left = images[0];
+    Leap::Image image_right = images[1];
 }
 
 int main(int argc, char** argv) {
