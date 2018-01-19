@@ -34,10 +34,13 @@ done
 sudo modprobe -r v4l2loopback
 sudo modprobe v4l2loopback video_nr=$devs
 
+echo video_nr=$devs
+
 # run docker container for each leap
 for dev in "${device_ids[@]}"
 do
   echo "starting docker for device" $dev
+  echo docker run -d -e PORT=$ws_starting_port -e DEV=/dev/video${videoIDs[$dev]} --device=/dev/bus/usb/$dev --device=/dev/video${videoIDs[$dev]} $docker_name
   CID=$(docker run -d -e PORT=$ws_starting_port -e DEV=/dev/video${videoIDs[$dev]} --device=/dev/bus/usb/$dev --device=/dev/video${videoIDs[$dev]} $docker_name &)
   IP=$(docker inspect --format '{{ .NetworkSettings.IPAddress }}' $CID)	
   echo "started leap daemon on "$IP" at port "$ws_starting_port" with video stream at /dev/video"${videoIDs[$dev]}
