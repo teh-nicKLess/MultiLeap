@@ -40,7 +40,7 @@ do
   echo "starting docker for device" $dev
   CID=$(docker run -d -e PORT=$ws_starting_port -e DEV=/dev/video${videoIDs[$dev]} --device=/dev/bus/usb/$dev --device=/dev/video${videoIDs[$dev]} $docker_name &)
   IP=$(docker inspect --format '{{ .NetworkSettings.IPAddress }}' $CID)	
-  echo "started leap daemon on "$IP" at port "$ws_starting_port" with video stream at /dev/video"${videoIDs[$dev]}
+  echo "started leap daemon on "$IP":"$ws_starting_port" with video stream at /dev/video"${videoIDs[$dev]}
   ws_starting_port=$((ws_starting_port+1))
 done
 
